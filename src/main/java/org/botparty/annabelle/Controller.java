@@ -1,6 +1,7 @@
 package org.botparty.annabelle;
 
 import org.botparty.annabelle.controller.*;
+import org.botparty.annabelle.domain.CommunicationData;
 
 public class Controller {
 
@@ -30,8 +31,11 @@ public class Controller {
     }
 
     public void send(String text) {
+
+        final CommunicationData data = new CommunicationData("remote","face",text);
+
         System.out.println(text);
-        ChatServer.getInstance().sendToAll(text);
+        ChatClient.getInstance().send(data);
         Data.getInstance().historyModel.addElement(text);
     }
 

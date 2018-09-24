@@ -9,7 +9,9 @@ public class Application {
                 new Runnable() {
                     @Override
                     public void run() {
-                        ChatServer.getInstance();
+                        //TODO - not make run against localhost
+                        ChatClient.getInstance().connectWebSocket("127.0.0.1");
+
                         AnnabelleFrame.createAndShowGUI();
                     }
                 }
