@@ -15,6 +15,10 @@ public class Controller {
         return instance;
     }
 
+    public FavoritesController getFavoritesController() {
+        return favoritesController;
+    }
+
     FavoritesController favoritesController;
     SendController puppetController;
     ScriptListController scriptListController;

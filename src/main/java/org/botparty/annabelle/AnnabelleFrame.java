@@ -3,16 +3,11 @@ package org.botparty.annabelle;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.botparty.annabelle.domain.Script;
-import org.botparty.annabelle.panels.HistoryPanel;
-import org.botparty.annabelle.panels.PuppetPanel;
-import org.botparty.annabelle.panels.ScriptContentPanel;
+import org.botparty.annabelle.panels.*;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.AdjustmentEvent;
-import java.awt.event.AdjustmentListener;
+import java.awt.event.*;
 import java.io.File;
 import java.util.HashSet;
 import java.util.Set;
@@ -32,6 +27,150 @@ public class AnnabelleFrame extends JFrame implements  ActionListener {
     }
 
     private AnnabelleFrame() {
+
+        GraphicsDevice defaultDevice = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
+        Rectangle screenBounds = defaultDevice.getDefaultConfiguration().getBounds();
+        this.setSize(
+                Math.round(screenBounds.width * .75f),
+                Math.round(screenBounds.height * .75f));
+
+         int preferredPanelWidth = this.getWidth()/3;
+         int preferredPanelHeight = this.getHeight()/3;
+
+        this.setLayout(new GridBagLayout());
+
+        GridBagConstraints scriptPanelConstraints = new GridBagConstraints();
+        scriptPanelConstraints.gridx = 0;
+        scriptPanelConstraints.gridy = 0;
+        scriptPanelConstraints.gridwidth = 1;
+        scriptPanelConstraints.gridheight = 1;
+        scriptPanelConstraints.weightx = 0.5;
+        scriptPanelConstraints.weighty = 0.5;
+        scriptPanelConstraints.fill = GridBagConstraints.BOTH;
+
+        JPanel scriptPanel = listPanel();
+        scriptPanel.setPreferredSize(new Dimension(preferredPanelWidth, preferredPanelHeight));
+        scriptPanel.setSize(scriptPanel.getPreferredSize());
+        scriptPanel.setMaximumSize(scriptPanel.getPreferredSize());
+        scriptPanel.setMinimumSize(scriptPanel.getPreferredSize());
+
+        this.add(scriptPanel,scriptPanelConstraints);
+
+        GridBagConstraints topNinePanelConstraints = new GridBagConstraints();
+        topNinePanelConstraints.gridx = 0;
+        topNinePanelConstraints.gridy = 1;
+        topNinePanelConstraints.gridwidth = 1;
+        topNinePanelConstraints.gridheight = 1;
+        topNinePanelConstraints.weightx = 0.5;
+        topNinePanelConstraints.weighty = 0.5;
+        topNinePanelConstraints.fill = GridBagConstraints.BOTH;
+
+        JPanel topNinePanel = new EmotionsButtonPanel(new Dimension(preferredPanelWidth,preferredPanelHeight));
+        topNinePanel.setPreferredSize(new Dimension(preferredPanelWidth, preferredPanelHeight));
+        topNinePanel.setSize(topNinePanel.getPreferredSize());
+        topNinePanel.setMaximumSize(topNinePanel.getPreferredSize());
+        topNinePanel.setMinimumSize(topNinePanel.getPreferredSize());
+
+        this.add(topNinePanel, topNinePanelConstraints);
+
+        GridBagConstraints facesPanelConstraints = new GridBagConstraints();
+        facesPanelConstraints.gridx = 0;
+        facesPanelConstraints.gridy = 2;
+        facesPanelConstraints.gridwidth = 1;
+        facesPanelConstraints.gridheight = 1;
+        facesPanelConstraints.weightx = 0.5;
+        facesPanelConstraints.weighty = 0.5;
+        facesPanelConstraints.fill = GridBagConstraints.BOTH;
+
+        JPanel facesPanel = eyePanel();
+        facesPanel.setSize(facesPanel.getPreferredSize());
+
+        this.add(facesPanel, facesPanelConstraints);
+
+        GridBagConstraints scriptContentPanelConstraints = new GridBagConstraints();
+        scriptContentPanelConstraints.gridx = 1;
+        scriptContentPanelConstraints.gridy = 0;
+        scriptContentPanelConstraints.gridwidth = 1;
+        scriptContentPanelConstraints.gridheight = 2;
+        scriptContentPanelConstraints.weightx = 0.5;
+        scriptContentPanelConstraints.weighty = 0.5;
+        scriptContentPanelConstraints.fill = GridBagConstraints.BOTH;
+
+
+        ScriptContentPanel scriptContentPanel = new ScriptContentPanel();
+        scriptContentPanel.setSize(scriptContentPanel.getPreferredSize());
+
+
+
+
+        this.add(scriptContentPanel, scriptContentPanelConstraints);
+
+        GridBagConstraints historyPanelConstraints = new GridBagConstraints();
+        historyPanelConstraints.gridx = 1;
+        historyPanelConstraints.gridy = 2;
+        historyPanelConstraints.gridwidth = 1;
+        historyPanelConstraints.gridheight = 1;
+        historyPanelConstraints.weightx = 0.5;
+        historyPanelConstraints.weighty = 0.5;
+        historyPanelConstraints.fill = GridBagConstraints.BOTH;
+
+        JPanel historyPanel = facePanel();
+        historyPanel.setPreferredSize(new Dimension(preferredPanelWidth, preferredPanelHeight));
+        historyPanel.setSize(historyPanel.getPreferredSize());
+        historyPanel.setMaximumSize(historyPanel.getPreferredSize());
+        historyPanel.setMinimumSize(historyPanel.getPreferredSize());
+
+
+        this.add(historyPanel, historyPanelConstraints);
+
+        GridBagConstraints chatTextPanelConstraints = new GridBagConstraints();
+        chatTextPanelConstraints.gridx = 2;
+        chatTextPanelConstraints.gridy = 0;
+        chatTextPanelConstraints.gridwidth = 1;
+        chatTextPanelConstraints.gridheight = 1;
+        chatTextPanelConstraints.weightx = 0.5;
+        chatTextPanelConstraints.weighty = 0.5;
+        chatTextPanelConstraints.fill = GridBagConstraints.BOTH;
+
+        JPanel chatTextPanel = puppetPanel();
+        chatTextPanel.setSize(chatTextPanel.getPreferredSize());
+
+        this.add(chatTextPanel, chatTextPanelConstraints);
+
+        GridBagConstraints topEighteenPanelConstraints = new GridBagConstraints();
+        topEighteenPanelConstraints.gridx = 2;
+        topEighteenPanelConstraints.gridy = 1;
+        topEighteenPanelConstraints.gridwidth = 1;
+        topEighteenPanelConstraints.gridheight = 1;
+        topEighteenPanelConstraints.weightx = 0.5;
+        topEighteenPanelConstraints.weighty = 0.5;
+        topEighteenPanelConstraints.fill = GridBagConstraints.BOTH;
+
+        JPanel topEighteenPanel = new FavoritesPanel(new Dimension(preferredPanelWidth,preferredPanelHeight));
+        topEighteenPanel.setPreferredSize(new Dimension(preferredPanelWidth, preferredPanelHeight));
+        topEighteenPanel.setSize(topEighteenPanel.getPreferredSize());
+        topEighteenPanel.setMaximumSize(topEighteenPanel.getPreferredSize());
+        topEighteenPanel.setMinimumSize(topEighteenPanel.getPreferredSize());
+
+        this.add(topEighteenPanel, topEighteenPanelConstraints);
+
+        GridBagConstraints queuePanelConstraints = new GridBagConstraints();
+        queuePanelConstraints.gridx = 2;
+        queuePanelConstraints.gridy = 2;
+        queuePanelConstraints.gridwidth = 1;
+        queuePanelConstraints.gridheight = 1;
+        queuePanelConstraints.weightx = 0.5;
+        queuePanelConstraints.weighty = 0.5;
+        queuePanelConstraints.fill = GridBagConstraints.BOTH;
+
+        JPanel queuePanel = historyPanel();
+        queuePanel.setSize(queuePanel.getPreferredSize());
+
+        this.add(queuePanel, queuePanelConstraints);
+
+
+
+        /*
         JPanel mainPanel = new JPanel();
         mainPanel.setLayout(new GridLayout(1,3));
 
@@ -56,14 +195,10 @@ public class AnnabelleFrame extends JFrame implements  ActionListener {
         JPanel miscPanel = miscPanel();
         mainPanel.add(miscPanel);
         this.add(mainPanel);
-
+*/
         createMenu();
 
-        GraphicsDevice defaultDevice = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
-        Rectangle screenBounds = defaultDevice.getDefaultConfiguration().getBounds();
-        this.setSize(
-                Math.round(screenBounds.width * .75f),
-                Math.round(screenBounds.height * .75f));
+
    }
 
     private JPanel listPanel() {
@@ -84,70 +219,9 @@ public class AnnabelleFrame extends JFrame implements  ActionListener {
         return scriptPanel;
     }
 
-    private JPanel scriptContentPanel() {
-        ScriptContentPanel scriptContentPanel = new ScriptContentPanel();
-        return scriptContentPanel;
-    }
-
-    private JPanel miscPanel() {
-        JPanel miscPanel = new JPanel();
-     //   miscPanel.setLayout(new BoxLayout(miscPanel,BoxLayout.PAGE_AXIS));
-        miscPanel.setLayout(new GridLayout(3,1));
-
-        JPanel puppetPanel = puppetPanel();
-        miscPanel.add(puppetPanel);
-
-        JPanel favoritesPanel = favoritesPanel();
-        miscPanel.add(favoritesPanel);
-
-        JPanel historyPanel = historyPanel();
-        miscPanel.add(historyPanel);
-
-        return miscPanel;
-    }
-
     private JPanel puppetPanel() {
         return PuppetPanel.create();
     }
-
-    private JPanel favoritesPanel() {
-        JPanel favoritesPanel = new JPanel();
-        favoritesPanel.setLayout(new GridLayout(3,3));
-
-        Set<String> keySet = Data.getInstance().favorites.getFavorites().keySet();
-        for(String key : keySet) {
-            JButton button = new JButton(key);
-            button.addActionListener(Controller.getInstance().favoritesController);
-            favoritesPanel.add(button);
-        }
-
-        return favoritesPanel;
-    }
-
-    private JPanel emotionsButtonsPanel() {
-        JPanel emotionsPanel = new JPanel();
-        emotionsPanel.setLayout(new GridLayout(2,3));
-
-        String[] emotionList = Data.getInstance().getEmotionList();
-        int i = 0;
-        for(String emotion : emotionList) {
-            if(i >= 6) break;
-            JButton button = new JButton(emotion);
-            button.addActionListener(
-                    new ActionListener() {
-                        @Override
-                        public void actionPerformed(ActionEvent e) {
-                                Controller.getInstance().send(String.format("\\face %s",emotion));
-                            }
-                    }
-                    );
-            emotionsPanel.add(button);
-            i++;
-        }
-
-        return emotionsPanel;
-    }
-
     private JPanel historyPanel() {
         return HistoryPanel.create();
     }

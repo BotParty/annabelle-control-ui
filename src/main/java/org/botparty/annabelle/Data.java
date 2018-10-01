@@ -1,11 +1,18 @@
 package org.botparty.annabelle;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.sun.deploy.util.OrderedHashSet;
 import org.botparty.annabelle.domain.Favorites;
 import org.botparty.annabelle.domain.Script;
 import org.botparty.annabelle.domain.ScriptList;
 
 import javax.swing.*;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.*;
 
 public class Data {
@@ -27,7 +34,7 @@ public class Data {
     Favorites favorites;
     String puppetText;
     String scriptContentText;
-    List<String> emotionList;
+    Collection<String> emotionList;
     String currentScriptTitle;
 
     DefaultListModel<String> historyModel;
@@ -66,18 +73,17 @@ public class Data {
         this.scriptContentText = scriptContentText;
     }
 
-    public String[] getEmotionList() { return  new String[] {"happy","angry","bedroom","begging","buckteeth","dead","disgust","dizzy","eyeroll","heart","laughter","mischevious","money","neutral","peeved","sad","stars","stoned","surprised","thinking","worry"};}
-
+    public String[] getEmotionList() { return emotionList.toArray(new String[0]); }
     private Data() {
 
         scriptModel = new DefaultListModel<>();
         scriptContentModel = new DefaultListModel<>();
         favorites = Favorites.create("Favorites.json");
         historyModel = new DefaultListModel<>();
-        emotionList = new ArrayList<String>();
+        emotionList = new HashSet<>();
 
         loadScriptList("Scripts.json");
-       // loadEmotionList("Faces.json");
+        loadEmotionList("Faces.json");
     }
 
     private void loadScriptFromMasterList(String parentPath) {
@@ -104,26 +110,49 @@ public class Data {
         this.setCurrentScriptTitle(currentScriptTitle);
     }
 
-    public void loadScriptList(String fileName) {
+    private void loadScriptList(String fileName) {
         masterList = ScriptList.create(fileName);
         loadScriptFromMasterList("");
     }
 
-    public void loadScriptList(File fileToOpen) {
+    void loadScriptList(File fileToOpen) {
         masterList = ScriptList.open(fileToOpen);
         String parentPath = fileToOpen.getParentFile().getAbsolutePath();
         System.out.println("Parent path: " + parentPath);
         loadScriptFromMasterList(parentPath);
     }
 
-    public void loadEmotionList(String fileName) {
-       // masterList = ScriptList.create(fileName);
-       // emotionList = new String[] {"happy","angry","bedroom","begging","buckteeth","dead","disgust","dizzy","eyeroll","heart","laughter","mischevious","money","neutral","peeved","sad","stars","stoned","surprised","thinking","worry"};
-    }
+    private void loadEmotionList(String fileName) {
 
-    public void loadEmotionList(File fileToOpen) {
-        masterList = ScriptList.open(fileToOpen);
-        emotionList = masterList.getScripts();
+        try {
+            BufferedReader reader = new BufferedReader(new FileReader(fileName));
+
+            // load in json
+
+            ObjectMapper mapper = new ObjectMapper();
+            StringBuilder builder = new StringBuilder();
+            String aux = "";
+
+            while ((aux = reader.readLine()) != null) {
+                builder.append(aux);
+            }
+
+            String text = builder.toString();
+            reader.close();
+
+            JsonNode rootNode = mapper.readValue(text, JsonNode.class);
+            if(rootNode.get("faces").isArray()) {
+
+                ArrayNode arrayNode = (ArrayNode) rootNode.get("faces");
+                emotionList = new OrderedHashSet();
+                for (JsonNode node: arrayNode) {
+                    emotionList.add(node.asText());
+                }
+            }
+        } catch (IOException e2) {
+            // TODO Auto-generated catch block
+            e2.printStackTrace();
+        }
     }
 
     public DefaultListModel<String> getHistoryModel() {
