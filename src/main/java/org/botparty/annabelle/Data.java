@@ -76,7 +76,6 @@ public class Data {
     public String[] getEmotionList() {
         return emotionList.toArray(new String[0]);
     }
-    public String[] getEmotionList() { return emotionList.toArray(new String[0]); }
     private Data() {
 
         scriptModel = new DefaultListModel<>();
