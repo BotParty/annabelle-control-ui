@@ -73,6 +73,9 @@ public class Data {
         this.scriptContentText = scriptContentText;
     }
 
+    public String[] getEmotionList() {
+        return emotionList.toArray(new String[0]);
+    }
     public String[] getEmotionList() { return emotionList.toArray(new String[0]); }
     private Data() {
 
@@ -122,27 +125,20 @@ public class Data {
         loadScriptFromMasterList(parentPath);
     }
 
-    private void loadEmotionList(String fileName) {
-
+    public void loadEmotionList(String fileName) {
         try {
             BufferedReader reader = new BufferedReader(new FileReader(fileName));
-
             // load in json
-
             ObjectMapper mapper = new ObjectMapper();
             StringBuilder builder = new StringBuilder();
             String aux = "";
-
             while ((aux = reader.readLine()) != null) {
                 builder.append(aux);
             }
-
             String text = builder.toString();
             reader.close();
-
             JsonNode rootNode = mapper.readValue(text, JsonNode.class);
             if(rootNode.get("faces").isArray()) {
-
                 ArrayNode arrayNode = (ArrayNode) rootNode.get("faces");
                 emotionList = new OrderedHashSet();
                 for (JsonNode node: arrayNode) {
@@ -153,6 +149,13 @@ public class Data {
             // TODO Auto-generated catch block
             e2.printStackTrace();
         }
+       // masterList = ScriptList.create(fileName);
+       // emotionList = new String[] {"happy","angry","bedroom","begging","buckteeth","dead","disgust","dizzy","eyeroll","heart","laughter","mischevious","money","neutral","peeved","sad","stars","stoned","surprised","thinking","worry"};
+    }
+
+    public void loadEmotionList(File fileToOpen) {
+        masterList = ScriptList.open(fileToOpen);
+        emotionList = masterList.getScripts();
     }
 
     public DefaultListModel<String> getHistoryModel() {

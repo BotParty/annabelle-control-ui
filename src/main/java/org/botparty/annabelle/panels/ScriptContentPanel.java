@@ -29,6 +29,20 @@ public class ScriptContentPanel extends JPanel {
         list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         list.setLayoutOrientation(JList.VERTICAL);
         list.getSelectionModel().addListSelectionListener(scriptContentController);
+        list.addMouseListener(
+                new MouseAdapter() {
+                    public void mouseClicked(MouseEvent mouseEvent) {
+                        if (mouseEvent.getClickCount() == 2) {
+                            int index = list.locationToIndex(mouseEvent.getPoint());
+                            if (index >= 0) {
+                                Object o = list.getModel().getElementAt(index);
+                                System.out.println("Double-clicked on: " + o.toString());
+                                scriptContentController.send();
+                            }
+                        }
+                    }
+                }
+        );
 
         JScrollPane scrollPane = new JScrollPane(list);
 
