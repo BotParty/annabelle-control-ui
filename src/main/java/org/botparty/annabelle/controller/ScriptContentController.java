@@ -47,7 +47,7 @@ public class ScriptContentController implements ListSelectionListener, ActionLis
         send();
     }
 
-    private void send() {
+    public void send() {
         String scriptContextText = Data.getInstance().getScriptContentText();
         if(scriptContextText != null) {
             Controller.getInstance().send(scriptContextText);
