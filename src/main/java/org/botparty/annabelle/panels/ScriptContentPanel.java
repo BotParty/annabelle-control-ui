@@ -12,11 +12,9 @@ import java.awt.event.MouseEvent;
 
 public class ScriptContentPanel extends JPanel {
 
-    private JButton button;
-
     public ScriptContentPanel() {
         super(new BorderLayout());
-        button = new JButton("Send");
+        JButton button = new JButton("Send");
 
         ScriptContentController scriptContentController = Controller.getInstance().getScriptContentController();
 
@@ -51,7 +49,4 @@ public class ScriptContentPanel extends JPanel {
         list.getActionMap().put("send", scriptContentController.sendAction() );
     }
 
-    public JButton getButton() {
-        return button;
-    }
 }

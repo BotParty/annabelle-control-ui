@@ -15,12 +15,16 @@ public class Controller {
         return instance;
     }
 
-    FavoritesController favoritesController;
-    SendController puppetController;
+    public FavoritesController getFavoritesController() {
+        return favoritesController;
+    }
+
+    private FavoritesController favoritesController;
+    private SendController puppetController;
     ScriptListController scriptListController;
 
-    ScriptContentController scriptContentController;
-    AddTextController addTextController;
+    private ScriptContentController scriptContentController;
+    private AddTextController addTextController;
 
     private Controller() {
         favoritesController = new FavoritesController();

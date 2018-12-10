@@ -23,7 +23,7 @@ public class ChatClient {
     private static ChatClient instance;
 
 
-    public void send(CommunicationData communicationData) {
+    void send(CommunicationData communicationData) {
         if(this.client != null && this.client.getReadyState() == WebSocket.READYSTATE.OPEN) {
             ObjectMapper mapper = new ObjectMapper();
             try {
@@ -35,7 +35,7 @@ public class ChatClient {
         }
     }
 
-    public void connectWebSocket(String address) {
+    void connectWebSocket(String address) {
         URI uri;
         try {
             String socketAddress = String.format("ws://%s:%s", address, "8080");

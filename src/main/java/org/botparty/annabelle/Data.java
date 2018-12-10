@@ -17,7 +17,7 @@ import java.util.*;
 
 public class Data {
 
-    static Data instance = null;
+    private static Data instance = null;
 
     public static Data getInstance() {
         if(instance == null) {
@@ -27,19 +27,19 @@ public class Data {
         return instance;
     }
 
-    ScriptList masterList;
-    Map<String, Script> scripts;
+    private ScriptList masterList;
+    private Map<String, Script> scripts;
     // <FileName, Title>
     Map<String, String> scriptFileMap;
-    Favorites favorites;
-    String puppetText;
-    String scriptContentText;
-    Collection<String> emotionList;
-    String currentScriptTitle;
+    private Favorites favorites;
+    private String puppetText;
+    private String scriptContentText;
+    private Collection<String> emotionList;
+    private String currentScriptTitle;
 
     DefaultListModel<String> historyModel;
     DefaultListModel<String> scriptModel;
-    DefaultListModel<String> scriptContentModel;
+    private DefaultListModel<String> scriptContentModel;
 
     public DefaultListModel<String> getScriptModel() {
         return scriptModel;
@@ -82,7 +82,7 @@ public class Data {
         scriptContentModel = new DefaultListModel<>();
         favorites = Favorites.create("Favorites.json");
         historyModel = new DefaultListModel<>();
-        emotionList = new ArrayList<String>();
+        emotionList = new ArrayList<>();
 
         loadScriptList("Scripts.json");
         loadEmotionList("Faces.json");
@@ -112,25 +112,25 @@ public class Data {
         this.setCurrentScriptTitle(currentScriptTitle);
     }
 
-    public void loadScriptList(String fileName) {
+    private void loadScriptList(String fileName) {
         masterList = ScriptList.create(fileName);
         loadScriptFromMasterList("");
     }
 
-    public void loadScriptList(File fileToOpen) {
+    void loadScriptList(File fileToOpen) {
         masterList = ScriptList.open(fileToOpen);
         String parentPath = fileToOpen.getParentFile().getAbsolutePath();
         System.out.println("Parent path: " + parentPath);
         loadScriptFromMasterList(parentPath);
     }
 
-    public void loadEmotionList(String fileName) {
+    private void loadEmotionList(String fileName) {
         try {
             BufferedReader reader = new BufferedReader(new FileReader(fileName));
             // load in json
             ObjectMapper mapper = new ObjectMapper();
             StringBuilder builder = new StringBuilder();
-            String aux = "";
+            String aux;
             while ((aux = reader.readLine()) != null) {
                 builder.append(aux);
             }
@@ -148,6 +148,7 @@ public class Data {
             // TODO Auto-generated catch block
             e2.printStackTrace();
         }
+       // masterList = ScriptList.create(fileName);
        // masterList = ScriptList.create(fileName);
        // emotionList = new String[] {"happy","angry","bedroom","begging","buckteeth","dead","disgust","dizzy","eyeroll","heart","laughter","mischevious","money","neutral","peeved","sad","stars","stoned","surprised","thinking","worry"};
     }

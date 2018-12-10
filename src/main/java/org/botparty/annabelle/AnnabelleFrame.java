@@ -1,20 +1,13 @@
 package org.botparty.annabelle;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.botparty.annabelle.domain.Script;
-import org.botparty.annabelle.panels.HistoryPanel;
-import org.botparty.annabelle.panels.PuppetPanel;
-import org.botparty.annabelle.panels.ScriptContentPanel;
+import org.botparty.annabelle.panels.*;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.AdjustmentEvent;
-import java.awt.event.AdjustmentListener;
 import java.io.File;
-import java.util.HashSet;
 import java.util.Set;
 
 public class AnnabelleFrame extends JFrame implements  ActionListener {
@@ -40,7 +33,7 @@ public class AnnabelleFrame extends JFrame implements  ActionListener {
         JPanel scriptPanel = listPanel();
 
         panel1.add(scriptPanel);
-        panel1.add(emotionsButtonsPanel());
+        panel1.add(new EmotionsPanel());
         panel1.add(eyePanel());
 
         mainPanel.add(panel1);
@@ -48,7 +41,7 @@ public class AnnabelleFrame extends JFrame implements  ActionListener {
         JPanel panel2 = new JPanel();
         panel2.setLayout(new BoxLayout(panel2, BoxLayout.Y_AXIS));
 
-        JPanel scriptContentPanel = scriptContentPanel();
+        JPanel scriptContentPanel = new ScriptContentPanel();
         panel2.add(scriptContentPanel);
         panel2.add(facePanel());
         mainPanel.add(panel2);
@@ -84,11 +77,6 @@ public class AnnabelleFrame extends JFrame implements  ActionListener {
         return scriptPanel;
     }
 
-    private JPanel scriptContentPanel() {
-        ScriptContentPanel scriptContentPanel = new ScriptContentPanel();
-        return scriptContentPanel;
-    }
-
     private JPanel miscPanel() {
         JPanel miscPanel = new JPanel();
      //   miscPanel.setLayout(new BoxLayout(miscPanel,BoxLayout.PAGE_AXIS));
@@ -97,7 +85,7 @@ public class AnnabelleFrame extends JFrame implements  ActionListener {
         JPanel puppetPanel = puppetPanel();
         miscPanel.add(puppetPanel);
 
-        JPanel favoritesPanel = favoritesPanel();
+        JPanel favoritesPanel = new FavoritesPanel();
         miscPanel.add(favoritesPanel);
 
         JPanel historyPanel = historyPanel();
@@ -109,45 +97,6 @@ public class AnnabelleFrame extends JFrame implements  ActionListener {
     private JPanel puppetPanel() {
         return PuppetPanel.create();
     }
-
-    private JPanel favoritesPanel() {
-        JPanel favoritesPanel = new JPanel();
-        favoritesPanel.setLayout(new GridLayout(3,3));
-
-        Set<String> keySet = Data.getInstance().favorites.getFavorites().keySet();
-        for(String key : keySet) {
-            JButton button = new JButton(key);
-            button.addActionListener(Controller.getInstance().favoritesController);
-            favoritesPanel.add(button);
-        }
-
-        return favoritesPanel;
-    }
-
-    private JPanel emotionsButtonsPanel() {
-        JPanel emotionsPanel = new JPanel();
-        emotionsPanel.setLayout(new GridLayout(2,3));
-
-        String[] emotionList = Data.getInstance().getEmotionList();
-        int i = 0;
-        for(String emotion : emotionList) {
-            if(i >= 6) break;
-            JButton button = new JButton(emotion);
-            button.addActionListener(
-                    new ActionListener() {
-                        @Override
-                        public void actionPerformed(ActionEvent e) {
-                                Controller.getInstance().send(String.format("\\face %s",emotion));
-                            }
-                    }
-                    );
-            emotionsPanel.add(button);
-            i++;
-        }
-
-        return emotionsPanel;
-    }
-
     private JPanel historyPanel() {
         return HistoryPanel.create();
     }
@@ -166,13 +115,8 @@ public class AnnabelleFrame extends JFrame implements  ActionListener {
             butt.setActionCommand(state);
             if (state.equals("blinking")) butt.setSelected(true);
 
-            butt.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    Controller.getInstance().send(
-                            String.format("\\eye %s", e.getActionCommand()));
-                }
-            });
+            butt.addActionListener(e -> Controller.getInstance().send(
+                    String.format("\\eye %s", e.getActionCommand())));
 
             group.add(butt);
 
@@ -185,17 +129,14 @@ public class AnnabelleFrame extends JFrame implements  ActionListener {
     private JPanel facePanel() {
         JPanel facePanel = new JPanel();
         facePanel.setLayout(new BoxLayout(facePanel, BoxLayout.Y_AXIS));
-        JComboBox faces = new JComboBox(Data.getInstance().getEmotionList());
+        JComboBox<String> faces = new JComboBox<>(Data.getInstance().getEmotionList());
         faces.setSelectedIndex(0);
-        faces.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (e.getSource() instanceof JComboBox) {
-                    JComboBox cb =  (JComboBox)e.getSource();
-                    String face = (String)cb.getSelectedItem();
+        faces.addActionListener(e -> {
+            if (e.getSource() instanceof JComboBox) {
+                JComboBox cb =  (JComboBox)e.getSource();
+                String face = (String)cb.getSelectedItem();
 
-                    Controller.getInstance().send(String.format("\\face %s",face));
-                }
+                Controller.getInstance().send(String.format("\\face %s",face));
             }
         });
 

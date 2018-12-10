@@ -1,7 +1,6 @@
 package org.botparty.annabelle.panels;
 
 import org.botparty.annabelle.Controller;
-import org.botparty.annabelle.Data;
 import org.botparty.annabelle.controller.SendController;
 
 import javax.swing.*;
@@ -11,9 +10,9 @@ import java.awt.event.ActionListener;
 
 public class PuppetPanel extends JPanel implements ActionListener {
 
-    JTextField puppetTextField;
+    private JTextField puppetTextField;
 
-    PuppetPanel() {
+    private PuppetPanel() {
 
         GridBagLayout layout = new GridBagLayout();
         this.setLayout(layout);
