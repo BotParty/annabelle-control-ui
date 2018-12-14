@@ -7,6 +7,7 @@ import org.java_websocket.WebSocket;
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.handshake.ServerHandshake;
 
+import java.net.ConnectException;
 import java.net.URI;
 import java.net.URISyntaxException;
 
@@ -22,7 +23,6 @@ public class ChatClient {
     }
     private static ChatClient instance;
 
-
     void send(CommunicationData communicationData) {
         if(this.client != null && this.client.getReadyState() == WebSocket.READYSTATE.OPEN) {
             ObjectMapper mapper = new ObjectMapper();
@@ -35,7 +35,8 @@ public class ChatClient {
         }
     }
 
-    void connectWebSocket(String address) {
+    boolean connectWebSocket(String address) {
+        this.address = address;
         URI uri;
         try {
             String socketAddress = String.format("ws://%s:%s", address, "8080");
@@ -44,7 +45,7 @@ public class ChatClient {
             uri = new URI(socketAddress);
         } catch (URISyntaxException e) {
             e.printStackTrace();
-            return;
+            return false;
         }
 
          this.client = new WebSocketClient(uri) {
@@ -60,19 +61,28 @@ public class ChatClient {
 
             @Override
             public void onClose(int code, String reason, boolean remote) {
-                System.out.println("Closed " + reason);
+                System.out.println("Closed: " + reason);
 
             }
 
             @Override
             public void onError(Exception ex) {
-
-               System.out.println( "Error " + ex.getMessage());
+               System.out.println( "Error: " + ex.getMessage());
             }
         };
 
-        this.client.connect();
+        try {
+            return this.client.connectBlocking();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    String getAddress() {
+        return this.address;
     }
 
     private WebSocketClient client;
+    private String address;
 }

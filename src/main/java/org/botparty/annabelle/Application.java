@@ -10,7 +10,7 @@ public class Application {
                     @Override
                     public void run() {
                         //TODO - not make run against localhost
-                        ChatClient.getInstance().connectWebSocket("127.0.0.1");
+
 
                         AnnabelleFrame.createAndShowGUI();
                     }
