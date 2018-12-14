@@ -14,6 +14,12 @@ public class AnnabelleFrame extends JFrame implements  ActionListener {
 
     private JMenuItem menuItemSave;
     private JMenuItem menuItemOpen;
+    private JMenuItem menuItemConnect;
+    private JButton connectButton;
+    private JTextField connectField;
+    private JDialog connectDialog;
+    private JDialog connectFailedDialog;
+    private JButton connectFailedButton;
 
     static AnnabelleFrame createAndShowGUI() {
         AnnabelleFrame frame = new AnnabelleFrame();
@@ -159,8 +165,15 @@ public class AnnabelleFrame extends JFrame implements  ActionListener {
         menu.add(menuItemSave);
         menu.add(menuItemOpen);
 
+        menuItemConnect = new JMenuItem("Connect");
+        menuItemConnect.addActionListener(this);
+
+        JMenu menuConnection = new JMenu("Connect");
+        menuConnection.add(menuItemConnect);
+
         JMenuBar menuBar = new JMenuBar();
         menuBar.add(menu);
+        menuBar.add(menuConnection);
         this.setJMenuBar(menuBar);
     }
 
@@ -180,6 +193,23 @@ public class AnnabelleFrame extends JFrame implements  ActionListener {
             save();
         } else if(e.getSource() == menuItemOpen) {
             openFile();
+        } else if(e.getSource() == menuItemConnect) {
+            showConnectionDialog();
+        } else if(e.getSource() == connectButton) {
+            System.out.println("Connect now");
+            String connection = connectField.getText();
+            System.out.println(connection);
+            if(connection != null && !connection.isEmpty()) {
+                final String home = "127.0.0.1";
+                boolean result = ChatClient.getInstance().connectWebSocket(connection);
+                connectDialog.setVisible(false);
+                if(!result) {
+                    showConnectionFailedDialog();
+                }
+            }
+        } else if(e.getSource() == connectFailedButton) {
+            connectFailedDialog.setVisible(false);
+            connectDialog.setVisible(true);
         }
     }
 
@@ -196,5 +226,35 @@ public class AnnabelleFrame extends JFrame implements  ActionListener {
 
             Data.getInstance().loadScriptList(fileToOpen);
         }
+    }
+
+    private void showConnectionDialog() {
+        System.out.println("Show Connect Dialog");
+        connectDialog = new JDialog(this, "Connect Dialog", true);
+        connectDialog.setLayout(new GridLayout(3,1));
+        connectDialog.add(new JLabel("Connect to"));
+        String address = ChatClient.getInstance().getAddress();
+        if(address == null) {
+            address = "127.0.0.1";
+        }
+        connectField = new JTextField(address);
+        connectDialog.add(connectField);
+        connectDialog.setSize(100,200);
+        connectButton = new JButton("Connect");
+        connectButton.addActionListener(this);
+        connectDialog.add(connectButton);
+
+        connectDialog.setVisible(true);
+    }
+
+    private void showConnectionFailedDialog() {
+        System.out.println("Show connection failed dialog");
+        connectFailedDialog = new JDialog(this, "Connection Failed", true);
+        connectFailedButton = new JButton("OK");
+        connectFailedButton.addActionListener(this);
+        connectFailedDialog.add(connectFailedButton);
+        connectFailedDialog.setSize(300,100);
+
+        connectFailedDialog.setVisible(true);
     }
 }
